@@ -31,34 +31,54 @@ class WishItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.name,
-                      style: theme.textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    _WaitBadge(
-                      label: formatWaitingLabel(item.createdAt),
-                      color: waitAccent,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final stack = constraints.maxWidth < 340;
+              final priceText = Text(
                 formatCurrency(item.price),
                 style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.w800,
                     ),
-              ),
-            ],
+              );
+
+              if (stack) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.name, style: theme.textTheme.titleLarge),
+                    const SizedBox(height: 8),
+                    _WaitBadge(
+                      label: formatWaitingLabel(item.createdAt),
+                      color: waitAccent,
+                    ),
+                    const SizedBox(height: 10),
+                    priceText,
+                  ],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(item.name, style: theme.textTheme.titleLarge),
+                        const SizedBox(height: 8),
+                        _WaitBadge(
+                          label: formatWaitingLabel(item.createdAt),
+                          color: waitAccent,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  priceText,
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -83,7 +103,7 @@ class WishItemCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.05),
+                color: theme.colorScheme.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: Text(
@@ -112,7 +132,7 @@ class _WaitBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
@@ -141,7 +161,7 @@ class _InfoTag extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white.withOpacity(0.05)
+            ? Colors.white.withValues(alpha: 0.05)
             : const Color(0xFFF3F5FA),
         borderRadius: BorderRadius.circular(999),
       ),

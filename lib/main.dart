@@ -212,7 +212,7 @@ class _BottomNavItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withOpacity(0.26),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.26),
                             blurRadius: 16,
                             offset: const Offset(0, 8),
                           ),

@@ -39,48 +39,63 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF6C8EFF), Color(0xFF8A7BFF)],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF8A7BFF).withValues(alpha: 0.22),
-                              blurRadius: 16,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(Icons.hourglass_bottom_rounded, color: Colors.white),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('买不买', style: Theme.of(context).textTheme.headlineMedium),
-                            const SizedBox(height: 6),
-                            Text(
-                              '把冲动先放进清单，等情绪过去再决定。',
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Theme.of(context).hintColor,
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final compact = constraints.maxWidth < 380;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF6C8EFF), Color(0xFF8A7BFF)],
                                   ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF8A7BFF).withValues(alpha: 0.22),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(Icons.hourglass_bottom_rounded, color: Colors.white),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  '买不买',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.headlineMedium,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            '把冲动先放进清单，等情绪过去再决定。',
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: Theme.of(context).hintColor,
+                                  height: 1.35,
+                                ),
+                          ),
+                          const SizedBox(height: 14),
+                          SizedBox(
+                            width: compact ? double.infinity : null,
+                            child: FilledButton.tonalIcon(
+                              onPressed: onAddPressed,
+                              icon: const Icon(Icons.add_rounded),
+                              label: const Text('记一下'),
                             ),
-                          ],
-                        ),
-                      ),
-                      FilledButton.tonalIcon(
-                        onPressed: onAddPressed,
-                        icon: const Icon(Icons.add_rounded),
-                        label: const Text('记一下'),
-                      ),
-                    ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 18),
                   HeroStatCard(
@@ -92,34 +107,50 @@ class HomeScreen extends StatelessWidget {
                     gradient: const [Color(0xFF6C8EFF), Color(0xFF8A7BFF)],
                   ),
                   const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _InsightCard(
-                          icon: Icons.timelapse_rounded,
-                          title: '待决定',
-                          value: '${wishItems.length}',
-                          subtitle: wishItems.isEmpty ? '清单是空的' : '总额 ${formatCurrency(activeTotal)}',
-                          accent: const Color(0xFF6C8EFF),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _InsightCard(
-                          icon: Icons.query_stats_rounded,
-                          title: '平均客单',
-                          value: wishItems.isEmpty ? '—' : formatCurrency(averageWishPrice),
-                          subtitle: boughtItems.isEmpty ? '先积累更多决策' : '已买 ${boughtItems.length} 件',
-                          accent: const Color(0xFF5CC97B),
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final stack = constraints.maxWidth < 360;
+                      final first = _InsightCard(
+                        icon: Icons.timelapse_rounded,
+                        title: '待决定',
+                        value: '${wishItems.length}',
+                        subtitle: wishItems.isEmpty ? '清单是空的' : '总额 ${formatCurrency(activeTotal)}',
+                        accent: const Color(0xFF6C8EFF),
+                      );
+                      final second = _InsightCard(
+                        icon: Icons.query_stats_rounded,
+                        title: '平均客单',
+                        value: wishItems.isEmpty ? '—' : formatCurrency(averageWishPrice),
+                        subtitle: boughtItems.isEmpty ? '先积累更多决策' : '已买 ${boughtItems.length} 件',
+                        accent: const Color(0xFF5CC97B),
+                      );
+
+                      if (stack) {
+                        return Column(
+                          children: [
+                            first,
+                            const SizedBox(height: 12),
+                            second,
+                          ],
+                        );
+                      }
+
+                      return Row(
+                        children: [
+                          Expanded(child: first),
+                          const SizedBox(width: 12),
+                          Expanded(child: second),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
-                  Row(
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text('正在犹豫', style: Theme.of(context).textTheme.titleLarge),
-                      const Spacer(),
                       Text(
                         '${wishItems.length} 件',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
