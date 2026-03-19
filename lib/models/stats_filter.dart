@@ -1,4 +1,4 @@
-enum StatsFilter {
+﻿enum StatsFilter {
   today,
   week,
   month,

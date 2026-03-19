@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class AnimatedPrimaryButton extends StatefulWidget {
   const AnimatedPrimaryButton({
@@ -33,17 +33,18 @@ class _AnimatedPrimaryButtonState extends State<AnimatedPrimaryButton> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
-          height: 58,
+          width: double.infinity,
+          height: 56,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [theme.colorScheme.primary, const Color(0xFF8A7BFF)],
+              colors: [theme.colorScheme.primary, const Color(0xFF54B8FF)],
             ),
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.primary.withOpacity(0.28),
+                color: theme.colorScheme.primary.withValues(alpha: 0.28),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(20),
+    this.padding = const EdgeInsets.all(18),
   });
 
   final Widget child;
@@ -16,12 +16,12 @@ class GlassCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 260),
+      duration: const Duration(milliseconds: 220),
       curve: Curves.easeOutCubic,
       padding: padding,
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -32,14 +32,16 @@ class GlassCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.28)
-                : const Color(0xFF9BA6C4).withOpacity(0.16),
-            blurRadius: 28,
-            offset: const Offset(0, 12),
+                ? Colors.black.withValues(alpha: 0.28)
+                : const Color(0xFF9BA6C4).withValues(alpha: 0.14),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
           ),
         ],
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.92),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.white.withValues(alpha: 0.92),
         ),
       ),
       child: child,

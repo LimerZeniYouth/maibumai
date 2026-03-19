@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:maibumai/data/item_repository.dart';
 import 'package:maibumai/models/app_stats.dart';
 import 'package:maibumai/models/category_tag.dart';
 import 'package:maibumai/models/item_status.dart';
 import 'package:maibumai/models/stats_filter.dart';
 import 'package:maibumai/models/wish_item.dart';
+import 'package:maibumai/services/notification_service.dart';
 
 class AppProvider extends ChangeNotifier {
   AppProvider(this._repository);
@@ -16,6 +17,15 @@ class AppProvider extends ChangeNotifier {
 
   List<WishItem> _items = [];
   List<WishItem> get items => _items;
+  List<WishItem> get activeWishItems =>
+      _items.where((item) => item.status == ItemStatus.wish).toList();
+  List<WishItem> get dueWishItems {
+    final now = DateTime.now();
+    return activeWishItems
+        .where((item) => item.remindAt != null && !item.remindAt!.isAfter(now))
+        .toList()
+      ..sort((a, b) => a.remindAt!.compareTo(b.remindAt!));
+  }
 
   List<CategoryTag> _categories = [];
   List<CategoryTag> get categories => _categories;
@@ -46,6 +56,7 @@ class AppProvider extends ChangeNotifier {
     _items = await _repository.fetchItems();
     _categories = await _repository.fetchCategories();
     _stats = await _repository.buildStats(filter: _statsFilter);
+    await NotificationService.instance.syncWishReminders(_items);
     _loading = false;
     notifyListeners();
   }
@@ -55,12 +66,33 @@ class AppProvider extends ChangeNotifier {
     required double price,
     required String category,
     required String note,
+    required int coolingDays,
   }) async {
     await _repository.addItem(
       name: name,
       price: price,
       category: category,
       note: note,
+      coolingDays: coolingDays,
+    );
+    await refresh();
+  }
+
+  Future<void> updateItem({
+    required String id,
+    required String name,
+    required double price,
+    required String category,
+    required String note,
+    required int coolingDays,
+  }) async {
+    await _repository.updateItem(
+      id: id,
+      name: name,
+      price: price,
+      category: category,
+      note: note,
+      coolingDays: coolingDays,
     );
     await refresh();
   }
@@ -75,6 +107,35 @@ class AppProvider extends ChangeNotifier {
     await refresh();
   }
 
+  Future<void> markItems(List<String> ids, ItemStatus status) async {
+    await _repository.updateItemsStatus(ids, status);
+    await refresh();
+  }
+
+  Future<void> restoreItem(String id) async {
+    await _repository.restoreItem(id);
+    await refresh();
+  }
+
+  Future<void> postponeItem(String id, int coolingDays) async {
+    await _repository.postponeItem(id, coolingDays);
+    await refresh();
+  }
+
+  Future<void> deleteItems(List<String> ids) async {
+    await _repository.deleteItems(ids);
+    await refresh();
+  }
+
+  Future<String> exportBackupJson() {
+    return _repository.exportBackupJson();
+  }
+
+  Future<void> importBackupJson(String rawJson) async {
+    await _repository.importBackupJson(rawJson);
+    await refresh();
+  }
+
   Future<void> updateStatsFilter(StatsFilter filter) async {
     _statsFilter = filter;
     _stats = await _repository.buildStats(filter: filter);
@@ -84,5 +145,9 @@ class AppProvider extends ChangeNotifier {
   Future<void> resetAllData() async {
     await _repository.resetAllData();
     await refresh();
+  }
+
+  Future<bool> requestNotificationPermissions() {
+    return NotificationService.instance.requestPermissions();
   }
 }

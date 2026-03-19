@@ -1,4 +1,4 @@
-import 'package:path/path.dart' as p;
+﻿import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,7 +20,7 @@ class AppDatabase {
 
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE items (
@@ -31,6 +31,8 @@ class AppDatabase {
             note TEXT,
             created_at INTEGER NOT NULL,
             status TEXT NOT NULL,
+            cooling_days INTEGER NOT NULL DEFAULT 3,
+            remind_at INTEGER,
             skipped_at INTEGER,
             bought_at INTEGER
           )
@@ -50,6 +52,21 @@ class AppDatabase {
             value TEXT NOT NULL
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute(
+            'ALTER TABLE items ADD COLUMN cooling_days INTEGER NOT NULL DEFAULT 3',
+          );
+          await db.execute(
+            'ALTER TABLE items ADD COLUMN remind_at INTEGER',
+          );
+          await db.execute('''
+            UPDATE items
+            SET remind_at = created_at + cooling_days * 86400000
+            WHERE status = 'wish' AND remind_at IS NULL
+          ''');
+        }
       },
     );
   }

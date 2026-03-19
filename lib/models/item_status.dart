@@ -1,4 +1,4 @@
-enum ItemStatus {
+﻿enum ItemStatus {
   wish,
   bought,
   skipped,
@@ -14,7 +14,7 @@ extension ItemStatusX on ItemStatus {
   String get label => switch (this) {
         ItemStatus.wish => '想买',
         ItemStatus.bought => '已购买',
-        ItemStatus.skipped => '不买了',
+        ItemStatus.skipped => '先不买',
       };
 
   static ItemStatus fromValue(String value) => ItemStatus.values.firstWhere(

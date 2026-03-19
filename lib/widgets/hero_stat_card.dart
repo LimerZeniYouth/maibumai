@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:maibumai/widgets/glass_card.dart';
+﻿import 'package:flutter/material.dart';
 
 class HeroStatCard extends StatelessWidget {
   const HeroStatCard({
@@ -23,7 +22,7 @@ class HeroStatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: gradient.last.withOpacity(0.22),
+            color: gradient.last.withValues(alpha: 0.22),
             blurRadius: 24,
             offset: const Offset(0, 14),
           ),
@@ -38,7 +37,7 @@ class HeroStatCard extends StatelessWidget {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.08),
+                color: Colors.white.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
             ),
@@ -48,24 +47,39 @@ class HeroStatCard extends StatelessWidget {
             bottom: 24,
             child: Icon(
               Icons.auto_awesome_rounded,
-              color: Colors.white.withOpacity(0.14),
+              color: Colors.white.withValues(alpha: 0.14),
               size: 52,
             ),
           ),
-          GlassCard(
+          Padding(
             padding: const EdgeInsets.all(24),
             child: DefaultTextStyle.merge(
               style: const TextStyle(color: Colors.white),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 12),
-                  Text(value, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w800)),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     subtitle,
-                    style: const TextStyle(fontSize: 14, color: Colors.white70),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
                   ),
                 ],
               ),
